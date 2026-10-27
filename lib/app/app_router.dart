@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
+import '../data/dummy_data.dart';
 import '../models/models.dart';
 import '../pages/edit_profile_page.dart';
 import '../pages/not_found_page.dart';
@@ -8,38 +9,45 @@ import '../pages/project_detail_page.dart';
 import '../pages/splash_page.dart';
 import 'app_routes.dart';
 
-class AppRouter {
-  AppRouter._();
+final appRouter = GoRouter(
+  initialLocation: AppRoutes.splash,
+  debugLogDiagnostics: true,
+  errorBuilder: (context, state) => const NotFoundPage(),
+  routes: [
+    GoRoute(
+      path: AppRoutes.splash,
+      builder: (context, state) => const SplashPage(),
+    ),
+    GoRoute(
+      path: AppRoutes.profile,
+      builder: (context, state) => const ProfilePage(),
+      routes: [
+        GoRoute(
+          path: 'projects/:id',
+          builder: (context, state) {
+            final id = state.pathParameters['id']!;
+            final project = findProjectById(id);
 
-  static Route<dynamic> onGenerateRoute(RouteSettings settings) {
-    final args = settings.arguments;
+            if (project == null) {
+              return const NotFoundPage();
+            }
 
-    switch (settings.name) {
-      case AppRoutes.splash:
-        return _build(const SplashPage(), settings);
+            return ProjectDetailPage(project: project);
+          },
+        ),
+        GoRoute(
+          path: 'edit',
+          builder: (context, state) {
+            final profile = state.extra;
 
-      case AppRoutes.profile:
-        return _build(const ProfilePage(), settings);
+            if (profile is! Profile) {
+              return const NotFoundPage();
+            }
 
-      case AppRoutes.projectDetail:
-        if (args is Project) {
-          return _build(ProjectDetailPage(project: args), settings);
-        }
-        return _build(const NotFoundPage(), settings);
-
-      case AppRoutes.editProfile:
-        if (args is Profile) {
-          return _build(EditProfilePage(profile: args), settings);
-        }
-        return _build(const NotFoundPage(), settings);
-
-      default:
-        return _build(const NotFoundPage(), settings);
-    }
-  }
-
-  static MaterialPageRoute<dynamic> _build(
-    Widget page,
-    RouteSettings settings,
-  ) => MaterialPageRoute(builder: (_) => page, settings: settings);
-}
+            return EditProfilePage(profile: profile);
+          },
+        ),
+      ],
+    ),
+  ],
+);

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
+import '../app/app_routes.dart';
 import '../data/dummy_data.dart';
 import '../models/models.dart';
-import '../app/app_routes.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -21,9 +22,14 @@ class _ProfilePageState extends State<ProfilePage> {
         title: const Text('Kartu Profil Digital'),
         actions: [
           IconButton(
+            icon: const Icon(Icons.edit),
+            tooltip: 'Edit Profil',
+            onPressed: _openEditProfile,
+          ),
+          IconButton(
             icon: const Icon(Icons.logout),
             tooltip: 'Keluar',
-            onPressed: _logout, // TODO: Lab 3
+            onPressed: _logout,
           ),
         ],
       ),
@@ -57,17 +63,18 @@ class _ProfilePageState extends State<ProfilePage> {
                 title: Text(project.title),
                 subtitle: Text(project.techStack.join(' • ')),
                 trailing: const Icon(Icons.chevron_right),
-                onTap: () => _openProjectDetail(project), // TODO: Lab 2
+                onTap: () => _openProjectDetail(project),
               ),
             ),
 
           const SizedBox(height: 16),
-
-          TextButton(
-            onPressed: () {
-              Navigator.pushNamed(context, '/halaman-ngawur');
-            },
-            child: const Text('Uji 404'),
+          Center(
+            child: TextButton(
+              onPressed: () {
+                context.go('/halaman-ngawur');
+              },
+              child: const Text('Uji 404'),
+            ),
           ),
         ],
       ),
@@ -75,25 +82,21 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   void _openProjectDetail(Project project) {
-    Navigator.pushNamed(context, AppRoutes.projectDetail, arguments: project);
+    context.push(AppRoutes.projectDetail(project.id));
   }
 
   Future<void> _openEditProfile() async {
-    final result = await Navigator.pushNamed(
-      context,
+    final result = await context.push<Profile>(
       AppRoutes.editProfile,
-      arguments: _profile,
+      extra: _profile,
     );
 
-    if (!mounted || result is! Profile) return;
+    if (!mounted || result == null) return;
+
     setState(() => _profile = result);
   }
 
   void _logout() {
-    Navigator.pushNamedAndRemoveUntil(
-      context,
-      AppRoutes.splash,
-      (route) => false,
-    );
+    context.go(AppRoutes.splash);
   }
 }
