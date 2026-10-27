@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../data/dummy_data.dart';
 import '../models/models.dart';
 import 'project_detail_page.dart';
+import 'edit_profile_page.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -23,7 +24,7 @@ class _ProfilePageState extends State<ProfilePage> {
           IconButton(
             icon: const Icon(Icons.edit),
             tooltip: 'Edit profil',
-            onPressed: () {}, // TODO: Lab 3
+            onPressed: _openEditProfile, // TODO: Lab 3
           ),
         ],
       ),
@@ -71,5 +72,17 @@ class _ProfilePageState extends State<ProfilePage> {
         builder: (context) => ProjectDetailPage(project: project),
       ),
     );
+  }
+
+  Future<void> _openEditProfile() async {
+    final result = await Navigator.push<Profile>(
+      context,
+      MaterialPageRoute(
+        builder: (context) => EditProfilePage(profile: _profile),
+      ),
+    );
+
+    if (!mounted || result == null) return;
+    setState(() => _profile = result);
   }
 }
