@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../data/dummy_data.dart';
 import '../models/models.dart';
+import 'project_detail_page.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -55,10 +56,19 @@ class _ProfilePageState extends State<ProfilePage> {
                 title: Text(project.title),
                 subtitle: Text(project.techStack.join(' • ')),
                 trailing: const Icon(Icons.chevron_right),
-                onTap: () {}, // TODO: Lab 2
+                onTap: () => _openProjectDetail(project), // TODO: Lab 2
               ),
             ),
         ],
+      ),
+    );
+  }
+
+  void _openProjectDetail(Project project) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ProjectDetailPage(project: project),
       ),
     );
   }
