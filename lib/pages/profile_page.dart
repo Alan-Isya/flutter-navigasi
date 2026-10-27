@@ -21,9 +21,9 @@ class _ProfilePageState extends State<ProfilePage> {
         title: const Text('Kartu Profil Digital'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.edit),
-            tooltip: 'Edit profil',
-            onPressed: _openEditProfile, // TODO: Lab 3
+            icon: const Icon(Icons.logout),
+            tooltip: 'Keluar',
+            onPressed: _logout, // TODO: Lab 3
           ),
         ],
       ),
@@ -49,6 +49,7 @@ class _ProfilePageState extends State<ProfilePage> {
           const SizedBox(height: 24),
           Text('Proyek', style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 8),
+
           for (final project in dummyProjects)
             Card(
               child: ListTile(
@@ -59,6 +60,15 @@ class _ProfilePageState extends State<ProfilePage> {
                 onTap: () => _openProjectDetail(project), // TODO: Lab 2
               ),
             ),
+
+          const SizedBox(height: 16),
+
+          TextButton(
+            onPressed: () {
+              Navigator.pushNamed(context, '/halaman-ngawur');
+            },
+            child: const Text('Uji 404'),
+          ),
         ],
       ),
     );
@@ -77,5 +87,13 @@ class _ProfilePageState extends State<ProfilePage> {
 
     if (!mounted || result is! Profile) return;
     setState(() => _profile = result);
+  }
+
+  void _logout() {
+    Navigator.pushNamedAndRemoveUntil(
+      context,
+      AppRoutes.splash,
+      (route) => false,
+    );
   }
 }
